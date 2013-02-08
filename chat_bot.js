@@ -117,6 +117,7 @@ commands = [
       bot.speak('Commands:');
       // loop over these commands and speak them
       for(i = 0; i < commands.length; i++) {
+        var command = commands[i];
         bot.speak(command.name + ' - ' + command.help);
       }
     },
