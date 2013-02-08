@@ -74,7 +74,7 @@ commands = [
       return text.match(/^bot dance$/);
     },
     command: function() {
-      bot.vote('down');
+      bot.vote('up');
     },
     help: 'upvote the current song'
   },
