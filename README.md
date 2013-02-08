@@ -1,4 +1,4 @@
-spiceworks_bot
+Spiceworks Turntable Bot
 ==============
 
 A marvel of modern robot engineering who makes his home in [http://turntable.fm/spiceworks](turntable.fm/spiceworks).
@@ -13,5 +13,5 @@ Bot Api for turntable.fm using alaingilbert api for TT.fm
 Some assembly required.
 
 What you'll need:
-* [Node.js](http://nodejs.org_
+* [Node.js](http://nodejs.org)
 * [Turntable-API](https://github.com/alaingilbert/Turntable-API/)
