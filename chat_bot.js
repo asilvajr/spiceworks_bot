@@ -9,57 +9,133 @@ var USERID = '50e71e01aaa5cd33869946fc';
 var VOTED = false;
 var VOTE_UP = 5;
 
-var bot = new Bot(AUTH, USERID, ROOMID);
+bot = new Bot(AUTH, USERID, ROOMID);
+
+commands = [
+  {
+    name: 'play',
+    match: function(text) {
+      return (text.match(/^\/play$/) || text.match(/^play with me$/) || text.match(/^hop on .*mace$/));
+    },
+    command: function() {
+      bot.speak('Yeah, not doing that yet. Maybe next time');
+    },
+    help: 'play or whatever'
+  },
+  {
+    name: 'hello',
+    match: function(text) {
+      return (text.match(/^hello$/) || text.match(/^hi.*quik_mace/));
+    },
+    command: function() {
+      bot.speak('Hey! How are ya @'+name+'?');
+    },
+    help: 'say hello or whatever'
+  },
+  {
+    name: 'bot jump on',
+    match: function(text) {
+      return text.match(/^bot jump on$/);
+    },
+    command: function() {
+      bot.addDj();
+    },
+    help: 'make the bot jump up'
+  },
+  {
+    name: 'bot jump off',
+    match: function(text) {
+      return text.match(/^bot jump off$/);
+    },
+    command: function() {
+      bot.remDj();
+    },
+    help: 'make the bot stop DJing'
+  },
+  {
+    name: 'bot add song',
+    match: function(text) {
+      return text.match(/^bot add song$/);
+    },
+    command: function() {
+      bot.roomInfo(true, function(data) {
+        var newSong = data.room.metadata.current_song._id;
+        var songName = data.room.metadata.current_song.metadata.song;
+        bot.vote('up');
+        bot.playlistAdd(newSong);
+        bot.speak('Added '+ songName);
+      });
+    },
+    help: "add a song to the bot's playlist"
+  },
+  {
+    name: 'bot dance',
+    match: function(text) {
+      return text.match(/^bot dance$/);
+    },
+    command: function() {
+      bot.vote('down');
+    },
+    help: 'upvote the current song'
+  },
+  {
+    name: 'bot downvote',
+    match: function(text) {
+      return text.match(/^bot downvote$/);
+    },
+    command: function() {
+      bot.vote('down');
+    },
+    help: 'downvote the current song'
+  },
+  {
+    name: 'bot skip',
+    match: function(text) {
+      return text.match(/^bot skip$/);
+    },
+    command: function() {
+      bot.skip();
+    },
+    help: 'skip the current song'
+  },
+  {
+    name: 'idk',
+    match: function(text) {
+      return text.match(/.*spice_bot.*/);
+    },
+    command: function() {
+      bot.speak('wut?');
+    },
+    help: 'respond to shit'
+  },
+  {
+    name: 'bot help',
+    match: function(text) {
+      return text.match(/^bot help$/);
+    },
+    command: function() {
+      bot.speak('Commands:');
+      // loop over these commands and speak them
+      for(i = 0; i < commands.length; i++) {
+        bot.speak(command.name + ' - ' + command.help);
+      }
+    },
+    help: 'print out list of commands'
+  }
+];
 
 bot.on('speak', function (data) {
   // Get the data
   var name = data.name;
   var text = data.text;
-
-  // Respond to "/hello" command
   
-  if (text.match(/^\/play$/) || text.match(/^play with me$/) || text.match(/^hop on .*mace$/) ){
-	//TODO: add play functionality
-	bot.speak('Yeah, not doing that yet. Maybe next time');
+  // loop over commands and execute them if there's a match
+  for(i = 0; i < commands.length; i++) {
+    var command = commands[i];
+    if(command.match(text)) {
+      command.command();
+    }
   }
-  
-  if (text.match(/^hello$/) || text.match(/^hi.*quik_mace/)) {
-    bot.speak('Hey! How are ya @'+name+'?');
-  }
-  
-  if (text.match(/^bot jump on$/)) {
-	bot.addDj();
-  }
-  
-  if (text.match(/^bot jump off$/)) {
-	bot.remDj();
-  }
-  
-  if (text.match(/^bot add song$/)) {
-	bot.roomInfo(true, function(data) {
-		var newSong = data.room.metadata.current_song._id;
-		var songName = data.room.metadata.current_song.metadata.song;
-		bot.vote('up');
-		bot.playlistAdd(newSong);
-		bot.speak('Added '+ songName);
-		});
-  }
-  
-  if (text.match(/^bot dance$/)){
-	bot.vote('up');
-  }
-  
-  if (text.match(/^bot dont$/)) {
-	bot.vote('down');
-  }
-  
-  if (text.match(/^bot skip song$/)){
-	bot.skip();
-	}
-	
-	if (text.match(/.*quik_mace.*/)){
-		bot.speak('wut?');
-	}
 });
 
 bot.on('newsong', function (data) {
@@ -78,6 +154,4 @@ bot.on('registered', function(data) {
 		bot.bootUser(user.userid,'This Bot does not like bots Bots');
 	}
 });
-
-
 
