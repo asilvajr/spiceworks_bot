@@ -250,7 +250,7 @@ commands = [
       return text.match(/^bot say/);
     },
     command: function(data) {
-      var stuff = text.replace(/^bot say /, '');
+      var stuff = data.text.replace(/^bot say /, '');
       bot.speak(stuff);
     },
     help: 'make the bot say stuff',
