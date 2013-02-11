@@ -247,7 +247,7 @@ commands = [
   {
     name: 'say',
     match: function(text) {
-      return text.match(/^bot fortune/);
+      return text.match(/^bot say/);
     },
     command: function(data) {
       var stuff = text.replace(/^bot say /, '');
