@@ -243,5 +243,17 @@ commands = [
     },
     help: 'disapprove of stuff',
     show: true
+  },
+  {
+    name: 'say',
+    match: function(text) {
+      return text.match(/^bot fortune/);
+    },
+    command: function(data) {
+      var stuff = text.replace(/^bot say /, '');
+      bot.speak(stuff);
+    },
+    help: 'make the bot say stuff',
+    show: false
   }
 ];
