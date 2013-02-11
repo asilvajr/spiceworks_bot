@@ -35,7 +35,7 @@ commands = [
       bot.speak('Yeah, not doing that yet. Maybe next time');
     },
     help: 'play or whatever',
-	show: false
+    show: false
   },
   {
     name: 'hello',
@@ -46,10 +46,10 @@ commands = [
       bot.speak('Hey! How are ya @'+data.name+'?');
     },
     help: 'say hello or whatever',
-	show: false
+    show: false
   },
   {
-	name: 'drink',
+    name: 'drink',
     match: function(text) {
       return (text.match(/^bot .*(beer|vodka|alcohol|drink|rum|soda|gin|tequilla)$/));
     },
@@ -57,10 +57,10 @@ commands = [
       bot.speak('@'+data.name+' get your own fraking drink!');
     },
     help: 'alcoholic',
-	show: false
+    show: false
   },
   {
-	name: 'drink classy',
+    name: 'drink classy',
     match: function(text) {
       return (text.match(/^bot.*(whiskey|wine)$/));
     },
@@ -68,10 +68,10 @@ commands = [
       bot.speak('Aren\'t you classy @'+data.name+' but no!!');
     },
     help: 'classy alcoholic',
-	show: false
+    show: false
   },
   {
-	name: 'drink classy',
+    name: 'drink classy',
     match: function(text) {
       return (text.match(/^bot get me a cab$/));
     },
@@ -79,7 +79,7 @@ commands = [
       bot.speak('@'+data.name+' srsly? youre in a company tt-room and should be workin. You arent drunk r u?');
     },
     help: 'need',
-	show: false
+    show: false
   },
   {
     name: 'bot jump on',
@@ -90,7 +90,7 @@ commands = [
       bot.addDj();
     },
     help: 'stage, bot starts DJing',
-	show: true
+    show: true
   },
   {
     name: 'bot jump off',
@@ -101,7 +101,7 @@ commands = [
       bot.remDj();
     },
     help: 'stage, bot stops DJing',
-	show: true
+    show: true
   },
   {
     name: 'info',
@@ -109,25 +109,23 @@ commands = [
       return text.match(/^info$/);
     },
     command: function(data) {
-	  bot.roomInfo(true, function(data) {
-		var user_count = data.room.metadata.djs.length;
-		var vote_count = data.room.metadata.upvotes;
-		bot.speak('ab' + autobop);
-		bot.speak('as' + autoskip);
-		bot.speak('djc' + user_count);
-		bot.speak('vc' + vote_count);
-		bot.speak('botid'+bot.userId);
-		bot.speak('bos'+botOnSet);
-		for(i = 0; i < djs.length; i++) {
-			bot.speak('djl' + djs);
-		}
-		});
-	  //bot.speak('ab' + autobop);
+      bot.roomInfo(true, function(data) {
+        var user_count = data.room.metadata.djs.length;
+        var vote_count = data.room.metadata.upvotes;
+        bot.speak('ab' + autobop);
+        bot.speak('as' + autoskip);
+        bot.speak('djc' + user_count);
+        bot.speak('vc' + vote_count);
+        bot.speak('botid'+bot.userId);
+        bot.speak('bos'+botOnSet);
+        for(i = 0; i < djs.length; i++) {
+          bot.speak('djl' + djs);
+        }
+      });
     },
     help: 'presents help commands in a PM',
-	show: false
+    show: false
   },
-  
   {
     name: 'bot add song',
     match: function(text) {
@@ -143,7 +141,7 @@ commands = [
       });
     },
     help: "adds current song to bot playlist",
-	show: true
+    show: true
   },
   {
     name: 'bot dance',
@@ -154,7 +152,7 @@ commands = [
       bot.vote('up');
     },
     help: 'upvote the current song',
-	show: true
+    show: true
   },
   {
     name: 'bot downvote',
@@ -165,7 +163,7 @@ commands = [
       bot.vote('down');
     },
     help: 's the current song',
-	show: true
+    show: true
   },
   {
     name: 'bot skip',
@@ -176,7 +174,7 @@ commands = [
       bot.skip();
     },
     help: 'skip the current song',
-	show: true
+    show: true
   },
   {
     name: 'default response',
@@ -184,48 +182,47 @@ commands = [
       return text.match(/.*spice_bot.*/);
     },
     command: function(data) {
-	  //sleep(100000);
+      //sleep(100000);
       bot.speak('wut?');
     },
     help: 'respond to shit',
-	show: false
+    show: false
   },
   {
-	name: 'autobop',
-	match: function(text) {
-		return text.match(/^bot autobop/);
-	},
-	command: function(data) {
+    name: 'autobop',
+    match: function(text) {
+      return text.match(/^bot autobop/);
+    },
+    command: function(data) {
 		autobop= !autobop;
-		if(autobop) {
-			bot.speak('All songs are awesome');
-			bot.vote('up');
-		}
-		else{
-			bot.speak('ok good, my neck is starting to hurt');
-		}
-	},
-	help: 'toggle autobot',
-	show: true
+      if(autobop) {
+        bot.speak('All songs are awesome');
+        bot.vote('up');
+      }
+      else{
+        bot.speak('ok good, my neck is starting to hurt');
+      }
+    },
+    help: 'toggle autobot',
+    show: true
   },
   {
-	name: 'autoskip',
-	match: function(text) {
-		return text.match(/^bot autoskip/);
-	},
-	command: function(data) {
-		autoskip= !autoskip;
-		if(autoskip) {
-			bot.speak('fine... ill skip');
-			bot.skip();
-		}
-		else{
-			bot.speak('playing my tunes!');
-		}
-		
-	},
-	help: 'toggle autobot',
-	show: true
+    name: 'autoskip',
+    match: function(text) {
+      return text.match(/^bot autoskip/);
+    },
+    command: function(data) {
+      autoskip= !autoskip;
+      if(autoskip) {
+        bot.speak('fine... ill skip');
+        bot.skip();
+      }
+      else {
+        bot.speak('playing my tunes!');
+      }
+    },
+    help: 'toggle autobot',
+    show: true
   },
   {
     name: 'bot help',
@@ -237,13 +234,13 @@ commands = [
       // loop over these commands and speak them
       for(i = 0; i < commands.length; i++) {
         var command = commands[i];
-		if (command.show) {
-			bot.pm('-' + command.name + '-' + command.help,data.userid);
-		}
+        if (command.show) {
+          bot.pm('-' + command.name + '-' + command.help,data.userid);
+        }
       }
     },
     help: 'print out list of commands',
-	show: false
+    show: false
   }
 ];
 
@@ -314,8 +311,6 @@ bot.on('roomChanged', function(data) {
 bot.on('nosong', function(data) {
 	bot.speak('so quiet');
 });
-
-
 
 bot.on('registered', function(data) {
 	var user = data.user[0];
