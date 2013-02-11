@@ -26,7 +26,7 @@ function sleep(milliseconds) {
   }
 }
 
-bot.on('speak', function (data) {
+function applyCommands(data) {
   // Get the data
   var name = data.name;
   var text = data.text;
@@ -38,7 +38,10 @@ bot.on('speak', function (data) {
       command.command(data);
     }
   }
-});
+}
+
+bot.on('speak', applyCommands);
+bot.on('pmmed', applyCommands);
 
 function updateDjs() {
 bot.roomInfo(true, function(data) {
