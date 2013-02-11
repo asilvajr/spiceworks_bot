@@ -205,7 +205,7 @@ commands = [
     show: true
   },
   {
-    name: 'bot help',
+    name: 'help',
     match: function(text) {
       return text.match(/^bot help$/);
     },
@@ -221,5 +221,27 @@ commands = [
     },
     help: 'list commands',
     show: false
+  },
+  {
+    name: 'flip',
+    match: function(text) {
+      return text.match(/^bot flip$/);
+    },
+    command: function(data) {
+      bot.speak('(╯°□°）╯︵ ┻━┻');
+    },
+    help: 'flip table',
+    show: true
+  },
+  {
+    name: 'disapprove',
+    match: function(text) {
+      return text.match(/^bot disapprove$/);
+    },
+    command: function(data) {
+      bot.speak('ಠ_ಠ');
+    },
+    help: 'disapprove of stuff',
+    show: true
   }
 ];
