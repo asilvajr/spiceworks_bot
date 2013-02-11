@@ -14,8 +14,7 @@ dj_count = 0;
 djs = [];
 moderators = [];
 botOnSet = -1;
-creds = new Creds();
-bot = new Bot(creds.AUTH, creds.USERID, creds.ROOMID);
+bot = new Bot(AUTH, USERID, ROOMID);
 
 function sleep(milliseconds) {
   var start = new Date().getTime();
@@ -88,7 +87,7 @@ bot.on('newsong', function (data) {
 
 
 bot.on('roomChanged', function(data) {
-	bot.speak('so quiet');
+	bot.speak("Annnnd Im back");
 });
 
 bot.on('nosong', function(data) {
