@@ -1,11 +1,8 @@
-var Bot    = require('../index');
-//var Functions = require('../functions.js')
-var WOO_ROOM = '4e091b2214169c018f008ea5';
-var SPICE_ROOM = '4f9ea3caaaa5cd2af400043d';
-var AUTH = 'devYecrJOgDHbNcBfURZconK';
-var ROOMID = SPICE_ROOM;
-var USERID = '50e71e01aaa5cd33869946fc';
+var Bot  = require('./index');
+var creds = require('./info');
 
+
+var VERBOSE = false;
 var VOTED = false;
 var VOTE_UP = 1;
 var autobop = false;
@@ -15,8 +12,9 @@ var dj_count = 0;
 var djs = [];
 var moderators = [];
 var botOnSet = -1;
-
-bot = new Bot(AUTH, USERID, ROOMID);
+creds = new Creds();
+//bot = new Bot(AUTH, USERID, ROOMID);
+bot = new Bot(creds.AUTH, creds.USERID, creds.ROOMID);
 
 function sleep(milliseconds) {
   var start = new Date().getTime();
@@ -36,7 +34,8 @@ commands = [
     command: function(data) {
       bot.speak('Yeah, not doing that yet. Maybe next time');
     },
-    help: 'play or whatever'
+    help: 'play or whatever',
+	show: false
   },
   {
     name: 'hello',
@@ -46,7 +45,41 @@ commands = [
     command: function(data) {
       bot.speak('Hey! How are ya @'+data.name+'?');
     },
-    help: 'say hello or whatever'
+    help: 'say hello or whatever',
+	show: false
+  },
+  {
+	name: 'drink',
+    match: function(text) {
+      return (text.match(/^bot .*(beer|vodka|alcohol|drink|rum|soda|gin|tequilla)$/));
+    },
+    command: function(data) {
+      bot.speak('@'+data.name+' get your own fraking drink!');
+    },
+    help: 'alcoholic',
+	show: false
+  },
+  {
+	name: 'drink classy',
+    match: function(text) {
+      return (text.match(/^bot.*(whiskey|wine)$/));
+    },
+    command: function(data) {
+      bot.speak('Aren\'t you classy @'+data.name+' but no!!');
+    },
+    help: 'classy alcoholic',
+	show: false
+  },
+  {
+	name: 'drink classy',
+    match: function(text) {
+      return (text.match(/^bot get me a cab$/));
+    },
+    command: function(data) {
+      bot.speak('@'+data.name+' srsly? youre in a company tt-room and should be workin. You arent drunk r u?');
+    },
+    help: 'need',
+	show: false
   },
   {
     name: 'bot jump on',
@@ -56,7 +89,8 @@ commands = [
     command: function(data) {
       bot.addDj();
     },
-    help: 'make the bot jump up'
+    help: 'stage, bot starts DJing',
+	show: true
   },
   {
     name: 'bot jump off',
@@ -66,7 +100,8 @@ commands = [
     command: function(data) {
       bot.remDj();
     },
-    help: 'make the bot stop DJing'
+    help: 'stage, bot stops DJing',
+	show: true
   },
   {
     name: 'info',
@@ -76,13 +111,21 @@ commands = [
     command: function(data) {
 	  bot.roomInfo(true, function(data) {
 		var user_count = data.room.metadata.djs.length;
+		var vote_count = data.room.metadata.upvotes;
 		bot.speak('ab' + autobop);
 		bot.speak('as' + autoskip);
 		bot.speak('djc' + user_count);
+		bot.speak('vc' + vote_count);
+		bot.speak('botid'+bot.userId);
+		bot.speak('bos'+botOnSet);
+		for(i = 0; i < djs.length; i++) {
+			bot.speak('djl' + djs);
+		}
 		});
 	  //bot.speak('ab' + autobop);
     },
-    help: 'make the bot stop DJing'
+    help: 'presents help commands in a PM',
+	show: false
   },
   
   {
@@ -99,7 +142,8 @@ commands = [
         bot.speak('Added '+ songName);
       });
     },
-    help: "add a song to the bot's playlist"
+    help: "adds current song to bot playlist",
+	show: true
   },
   {
     name: 'bot dance',
@@ -109,7 +153,8 @@ commands = [
     command: function(data) {
       bot.vote('up');
     },
-    help: 'upvote the current song'
+    help: 'upvote the current song',
+	show: true
   },
   {
     name: 'bot downvote',
@@ -119,7 +164,8 @@ commands = [
     command: function(data) {
       bot.vote('down');
     },
-    help: 'downvote the current song'
+    help: 's the current song',
+	show: true
   },
   {
     name: 'bot skip',
@@ -129,10 +175,11 @@ commands = [
     command: function(data) {
       bot.skip();
     },
-    help: 'skip the current song'
+    help: 'skip the current song',
+	show: true
   },
   {
-    name: 'idk',
+    name: 'default response',
     match: function(text) {
       return text.match(/.*spice_bot.*/);
     },
@@ -140,7 +187,8 @@ commands = [
 	  //sleep(100000);
       bot.speak('wut?');
     },
-    help: 'respond to shit'
+    help: 'respond to shit',
+	show: false
   },
   {
 	name: 'autobop',
@@ -157,7 +205,8 @@ commands = [
 			bot.speak('ok good, my neck is starting to hurt');
 		}
 	},
-	help: 'toggle autobot'
+	help: 'toggle autobot',
+	show: true
   },
   {
 	name: 'autoskip',
@@ -175,7 +224,8 @@ commands = [
 		}
 		
 	},
-	help: 'toggle autobot'
+	help: 'toggle autobot',
+	show: true
   },
   {
     name: 'bot help',
@@ -187,10 +237,13 @@ commands = [
       // loop over these commands and speak them
       for(i = 0; i < commands.length; i++) {
         var command = commands[i];
-        bot.pm(command.name + ' - ' + command.help,data.userid);
+		if (command.show) {
+			bot.pm('-' + command.name + '-' + command.help,data.userid);
+		}
       }
     },
-    help: 'print out list of commands'
+    help: 'print out list of commands',
+	show: false
   }
 ];
 
@@ -214,12 +267,12 @@ bot.roomInfo(true, function(data) {
 		djs = data.room.metadata.djs;
 		dj_count = djs.length;
 		moderators = data.room.metadata.moderator_id;});
-		botOnSet = djs.indexOf(bot.userid)
+		botOnSet = djs.indexOf(bot.userId)
 };
 
 function noOnePlaysAlone() {
 	updateDjs();
-	if( dj_count == 1 && botOnSet> -1) {
+	if( dj_count == 1 && botOnSet == -1) {
 		bot.addDj();
 		bot.speak('hey dont play alone, ill join you');
 	}
@@ -229,8 +282,6 @@ function noOnePlaysAlone() {
 	if(dj_count <= 1 && botOnSet > -1) {
 		bot.remDj();
 	}
-	bot.speak('dj count' + dj_count);
-	bot.speak('am i up?' + botOnSet);
 }
 
 bot.on('newsong', function (data) {
@@ -238,8 +289,6 @@ bot.on('newsong', function (data) {
 	if (vote_count >= VOTE_UP) {
 		bot.vote('up');
 	}
-	bot.speak('ab' + autobop);
-	bot.speak('as' + autoskip);
 	
 	if(autobop)  {bot.bop();}
 	if(autoskip) {bot.skip();}
@@ -248,6 +297,13 @@ bot.on('newsong', function (data) {
 	sleep(10000);
 	noOnePlaysAlone();
 	
+	if(VERBOSE) {
+		bot.speak('ab' + autobop);
+		bot.speak('as' + autoskip);
+		
+		bot.speak('dj count' + dj_count);
+		bot.speak('am i up?' + botOnSet);
+	}
 });
 
 
