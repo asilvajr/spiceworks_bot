@@ -4,16 +4,16 @@ var creds = require('./info');
 // experimental, need Angel to verify if this works...
 require('./commands.js');
 
-var VERBOSE = false;
-var VOTED = false;
-var VOTE_UP = 1;
-var autobop = false;
-var autoskip = false;
-var user_count = 0;
-var dj_count = 0;
-var djs = [];
-var moderators = [];
-var botOnSet = -1;
+VERBOSE = false;
+VOTED = false;
+VOTE_UP = 1;
+autobop = false;
+autoskip = false;
+user_count = 0;
+dj_count = 0;
+djs = [];
+moderators = [];
+botOnSet = -1;
 creds = new Creds();
 bot = new Bot(creds.AUTH, creds.USERID, creds.ROOMID);
 
