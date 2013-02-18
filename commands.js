@@ -51,7 +51,7 @@ commands = [
     show: false
   },
   {
-    name: 'drink classy',
+    name: 'drink safely',
     match: function(text) {
       return (text.match(/^bot get me a cab$/));
     },
@@ -86,24 +86,41 @@ commands = [
   {
     name: 'info',
     match: function(text) {
-      return text.match(/^info$/);
+      return text.match(/^bot info$/);
     },
-    command: function(data) {
+    command: function(ddata) {
       bot.roomInfo(true, function(data) {
+		var userid = ddata.userid;
         var user_count = data.room.metadata.djs.length;
         var vote_count = data.room.metadata.upvotes;
-        bot.speak('ab' + autobop);
-        bot.speak('as' + autoskip);
-        bot.speak('djc' + user_count);
-        bot.speak('vc' + vote_count);
-        bot.speak('botid'+bot.userId);
-        bot.speak('bos'+botOnSet);
-        for(i = 0; i < djs.length; i++) {
-          bot.speak('djl' + djs);
-        }
+        bot.pm('ab' + autobop, userid);
+        bot.pm('as' + autoskip, userid);
+        bot.pm('djc' + user_count, userid);
+        bot.pm('vc' + vote_count, userid);
+        bot.pm('botid'+bot.userId, userid);
+        bot.pm('bos'+ botOnSet, userid);
+        bot.pm('djl' + djs, userid);
       });
     },
     help: 'presents help commands in a PM',
+    show: false
+  },
+    {
+    name: 'status',
+    match: function(text) {
+      return text.match(/^bot status$/);
+    },
+    command: function(ddata) {
+      bot.roomInfo(true, function(data) {
+		var userid = ddata.userid;
+		bot.pm("botID" + botUserId,userid);
+        bot.pm("bcp" + botCurrentlyPlaying,userid);
+		bot.pm("joas" + jumpOffAfterSong,userid);
+		bot.pm("bos" + botOnSet,userid);
+		bot.pm("bsi" + botSetIndex,userid);
+      });
+    },
+    help: 'presents bot status in a PM',
     show: false
   },
   {
@@ -129,6 +146,7 @@ commands = [
       return text.match(/^bot dance$/);
     },
     command: function(data) {
+	  
       bot.vote('up');
     },
     help: 'upvote the current song',
@@ -148,7 +166,7 @@ commands = [
   {
     name: 'bot skip',
     match: function(text) {
-      return text.match(/^bot skip$/);
+      return text.match(/^bot skip(\ssong)?/);
     },
     command: function(data) {
       bot.skip();
@@ -171,17 +189,28 @@ commands = [
   {
     name: 'autobop',
     match: function(text) {
-      return text.match(/^bot autobop/);
+      return text.match(/^bot autobop(\son|\soff)?/);
     },
     command: function(data) {
 		autobop= !autobop;
-      if(autobop) {
-        bot.speak('All songs are awesome');
+     if(!data.text.match(/(on|off)/)) {
+		 if(autobop){
+			bot.speak('All songs are awesome');
+			bot.vote('up');
+		  }
+		  else{
+			bot.speak('ok good, my neck is starting to hurt');
+		  }
+	}
+	  if(data.text.match(/off/)){
+		bot.speak('ok good, my neck is starting to hurt');
+		autobop=false;
+	  }
+	  if(data.text.match(/on/)){
+		bot.speak('All songs are awesome');
         bot.vote('up');
-      }
-      else{
-        bot.speak('ok good, my neck is starting to hurt');
-      }
+		autobop=true;
+	  }
     },
     help: 'toggle autobop',
     show: true
@@ -189,17 +218,28 @@ commands = [
   {
     name: 'autoskip',
     match: function(text) {
-      return text.match(/^bot autoskip/);
+      return text.match(/^bot autoskip(\son|\soff)?/);
     },
     command: function(data) {
       autoskip = !autoskip;
-      if(autoskip) {
-        bot.speak("fine... I'll skip");
-        bot.skip();
-      }
-      else {
-        bot.speak('playing my tunes!');
-      }
+	  if(!data.text.match(/(on|off)/)){
+		if(autoskip) {
+			bot.speak("fine... I'll skip");
+			bot.skip();
+		}
+		else {
+			bot.speak('playing mee tunes!');
+		}
+	 }
+	  if(data.text.match(/on/)) {
+		autoskip=true;
+		bot.speak("fine... I'll skip");
+		bot.skip();
+	  }
+	  if(data.text.match(/off/)) {
+		autoskip=false;
+		bot.speak('playing mee tunes!');
+	  }
     },
     help: 'toggle autobot',
     show: true
@@ -225,7 +265,7 @@ commands = [
   {
     name: 'flip',
     match: function(text) {
-      return text.match(/^bot flip$/);
+      return text.match(/^bot (table)?\s?flip$/);
     },
     command: function(data) {
       bot.speak('(╯°□°）╯︵ ┻━┻');
@@ -236,7 +276,7 @@ commands = [
   {
     name: 'disapprove',
     match: function(text) {
-      return text.match(/^bot disapprove$/);
+      return text.match(/^bot (disapprove|glare)$/);
     },
     command: function(data) {
       bot.speak('ಠ_ಠ');
@@ -250,10 +290,17 @@ commands = [
       return text.match(/^bot say/);
     },
     command: function(data) {
-      var stuff = data.text.replace(/^bot say /, '');
-      bot.speak(stuff);
+	  var message = data.text;
+	  if (message.match(/\".*\"/)){
+		message = message.replace(/^bot say "/, '');
+		message = message.replace(/"/, '');
+	  }
+	  else{
+		var message = message.replace(/^bot say /, '');
+	  }
+      bot.speak(message);
     },
-    help: 'make the bot say stuff',
+    help: 'make the bot say stuff using \"\'s',
     show: false
   }
 ];
