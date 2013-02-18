@@ -1,7 +1,7 @@
 {
   "author": "waffles2411 <wingles.angel4@gmail.com>",
   "contributors": ["EWOOD"],
-  "name": "spice bot",
+  "name": "spicebot",
   "description": "A turntable.fm API done by Alain Gilbert <alain.gilbert.15@gmail.com>, modified by Angel Silva Jr. and...",
   "keywords": ["turntable.fm", "turntable", "stickybits", "realtime"],
   "version": "1.5.4",
@@ -14,7 +14,8 @@
     "start": "./chat_bot.js"
   },
   "engines": {
-    "node": ">= v0.4.0"
+    "node": "0.8.19",
+    "npm": "1.2.10"
   },
   "dependencies": {},
   "devDependencies": {}
