@@ -289,7 +289,7 @@ commands = [
   {
     name: 'say',
     match: function(text) {
-      return text.match(/^bot say/);
+      return text.match(/^(bot|@spice_bot) say/);
     },
     command: function(data) {
 	  var message = data.text;
