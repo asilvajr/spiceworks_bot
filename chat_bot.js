@@ -110,14 +110,14 @@ bot.on('registered', function(data) {
 	if(VERBOSE) bot.speak("registered");
 	user_count++;
 	var user = data.user[0];
-	if (user.name.match(/evil_mace/)) {
-		bot.speak("Sup evil_mace");
-	} else if(!user.name === 'spice_bot') {
-    bot.speak("Hey there, @" + user.name + "!\nType \"bot help\" for assistance.");
-  }
+
 	if (user.name.match(/ttstats_\d+/)) {
 		bot.bootUser(user.userid,'For Company Privacy');
-	}
+	} else {
+    if(!user.name === 'spice_bot') {
+      bot.speak("Hey there, @" + user.name + "!\nType \"bot help\" for assistance.");
+    }
+  }
 });
 
 bot.on('deregistered',function(data){
