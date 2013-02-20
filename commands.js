@@ -68,6 +68,7 @@ commands = [
     },
     command: function(data) {
       bot.addDj();
+	  botOnSet = true;
     },
     help: 'stage, bot starts DJing',
     show: true
@@ -79,6 +80,7 @@ commands = [
     },
     command: function(data) {
       bot.remDj();
+	  botOnSet = false;
     },
     help: 'stage, bot stops DJing',
     show: true
