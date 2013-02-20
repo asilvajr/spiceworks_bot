@@ -110,8 +110,10 @@ bot.on('registered', function(data) {
 	if(VERBOSE) bot.speak("registered");
 	user_count++;
 	var user = data.user[0];
-    bot.speak('Hey there, '+ user.name + '!');
-    bot.pm('Type "bot help" for bot assistance. Enjoy your stay!',user.name);
+    if(!user.name.match(/spice_bot/)) {
+		bot.speak('Hey there, '+ user.name + '!');
+		bot.pm('Type "bot help" for bot assistance. Enjoy your stay!',user.name);
+	}
 	if (user.name.match(/ttstats_\d+/)) {
 		bot.bootUser(user.userid,'For Company Privacy');
 	}
