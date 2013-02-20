@@ -112,7 +112,10 @@ bot.on('registered', function(data) {
 	var user = data.user[0];
 	if (user.name.match(/evil_mace/)) {
 		bot.speak("Sup evil_mace");
-	}
+	} else {
+    bot.speak('Hey there, ' user.name + '!');
+    bot.speak('Type "bot help" for assistance. Enjoy your stay!');
+  }
 	if (user.name.match(/ttstats_\d+/)) {
 		bot.bootUser(user.userid,'For Company Privacy');
 	}
