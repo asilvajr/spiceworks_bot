@@ -112,7 +112,7 @@ bot.on('registered', function(data) {
 	var user = data.user[0];
 	if (user.name.match(/evil_mace/)) {
 		bot.speak("Sup evil_mace");
-	} else {
+	} else if(!user.name === 'spice_bot') {
     bot.speak('Hey there, ' user.name + '!');
     bot.speak('Type "bot help" for assistance. Enjoy your stay!');
   }
