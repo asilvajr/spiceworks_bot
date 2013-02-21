@@ -20,7 +20,7 @@ commands = [
   {
     name: 'hello',
     match: function(text) {
-      return (text.match(/^hello$/) || text.match(/^hi.*quik_mace/));
+      return (text.match(/^hello$/) || text.match(/^hey bot$/) || text.match(/^hi.*quik_mace/));
     },
     command: function(data) {
       bot.speak('Hey! How are ya @'+data.name+'?');
