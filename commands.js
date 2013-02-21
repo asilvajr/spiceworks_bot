@@ -68,7 +68,6 @@ commands = [
     },
     command: function(data) {
       bot.addDj();
-	  botOnSet = true;
     },
     help: 'stage, bot starts DJing',
     show: true
@@ -80,7 +79,6 @@ commands = [
     },
     command: function(data) {
       bot.remDj();
-	  botOnSet = false;
     },
     help: 'stage, bot stops DJing',
     show: true
@@ -289,7 +287,7 @@ commands = [
   {
     name: 'say',
     match: function(text) {
-      return text.match(/^(bot|@spice_bot) say/);
+      return text.match(/^bot say/);
     },
     command: function(data) {
 	  var message = data.text;
