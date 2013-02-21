@@ -1,4 +1,4 @@
-var Bot  = require('./index');
+var Bot  = require('ttapi');
 var creds = require('./info');
 
 // experimental, need Angel to verify if this works...
@@ -114,10 +114,10 @@ bot.on('registered', function(data) {
 	if (user.name.match(/ttstats_\d+/)) {
 		bot.bootUser(user.userid,'For Company Privacy');
 	} else {
-    if(!user.name === 'spice_bot') {
-      bot.speak("Hey there, @" + user.name + "!\nType \"bot help\" for assistance.");
-    }
-  }
+		if(!user.name === 'spice_bot') {
+			bot.speak("Hey there, @" + user.name + "!\nType \"bot help\" for assistance.");
+		}
+	}
 });
 
 bot.on('deregistered',function(data){

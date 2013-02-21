@@ -14,9 +14,11 @@
     "start": "./chat_bot.js"
   },
   "engines": {
-    "node": "0.8.19",
-    "npm": "1.2.10"
+    "node": "0.8.18",
+    "npm": "1.2.2"
   },
-  "dependencies": {},
+  "dependencies": {
+	"ttapi" : "2.0.1"
+	},
   "devDependencies": {}
 }
