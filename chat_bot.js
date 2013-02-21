@@ -162,6 +162,17 @@ bot.on('rem_dj',function(data){
 		bot.addDj();
 		botOnSet=true;
 	}
+	var user = data.user[0];
+	if (user.name.match(/evil_mace/)) {
+		bot.speak("Don't stop now @evil_mace");
+	}
+	if (user.name.match(/Eric S \(Dev\)/)) {
+		bot.speak("Awww, is that the best you've got? @Eric");
+	}
+	if (user.name.match(/Eric Fr/)) {
+		bot.speak("Really? You're giving up so soon @EFW?");
+	}
+
 });
 
 
@@ -183,6 +194,17 @@ bot.on('add_dj',function(data){
 		else{ 
 			bot.remDj();
 			botOnSet=false;}
+	}
+
+	var user = data.user[0];
+	if (user.name.match(/evil_mace/)) {
+		bot.speak("Kick it @evil_mace");
+	}
+	if (user.name.match(/Eric S \(Dev\)/)) {
+		bot.speak("Alright, here we go, @Eric S (Dev)");
+	}
+	if (user.name.match(/Eric Fr/)) {
+		bot.speak("Nothing too slow now, ok @EFW?");
 	}
 	
 });
