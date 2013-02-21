@@ -15,7 +15,7 @@
   },
   "engines": {
     "node": "0.8.19",
-    "npm": "1.2.2"
+    "npm": "1.2.10"
   },
   "dependencies": {
 	"ttapi" : "2.0.1"
