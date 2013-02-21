@@ -173,6 +173,10 @@ bot.on('rem_dj',function(data){
 		bot.speak("Really? You're giving up so soon @EFW?");
 	}
 
+	if(dj_count < 5 && user_count > dj_count) {
+		bot.speak("OK, who's gonna step up and DJ now?  Come on listeners - we need some music!")
+	}
+
 });
 
 
