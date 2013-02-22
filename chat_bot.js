@@ -3,11 +3,14 @@ var creds = require('./info');
 
 // experimental, need Angel to verify if this works...
 require('./commands.js');
+require('./messages.js');
 
 VERBOSE = false;
 M_VERBOSE = false;
 VOTED = false;
 VOTE_UP = 1;
+PCT_RESP_QUIT_DJ = 50;
+PCT_RESP_START_DJ = 50;
 botUserId = USERID;
 autobop = false;
 autoskip = false;
@@ -114,7 +117,7 @@ bot.on('registered', function(data) {
 		bot.bootUser(user.userid,'For Company Privacy');
 
 	} else {
-		if(!user.name === 'spice_bot') {
+		if(user.name !== 'spice_bot') {
 			bot.speak("Hey there, @" + user.name + "!\nType \"bot help\" for assistance.");
 		}
 
@@ -166,21 +169,20 @@ bot.on('rem_dj',function(data){
 		bot.addDj();
 		botOnSet=true;
 	}
-	var user = data.user[0];
-	if (user.name.match(/evil_mace/)) {
-		bot.speak("Don't stop now @evil_mace");
-	}
-	if (user.name.match(/Eric S \(Dev\)/)) {
-		bot.speak("Awww, is that the best you've got? @Eric");
-	}
-	if (user.name.match(/Eric Fr/)) {
-		bot.speak("Really? You're giving up so soon @EFW?");
+
+	var spoke = false;
+	var rand = Math.floor((Math.random()*100)+1);
+	if (rand < PCT_RESP_QUIT_DJ) {
+		var user = data.user[0];
+		if(user.name !== 'spice_bot') {
+			bot.speak(QUIT_DJ[rand % QUIT_DJ.length].replace(/%%/g, '@'+user.name));
+			spoke = true;
+		}
 	}
 
-	if(dj_count < 5 && user_count > dj_count) {
+	if(dj_count < 5 && user_count > dj_count + 1 && !spoke) {
 		bot.speak("OK, who's gonna step up and DJ now?  Come on listeners - we need some music!")
 	}
-
 });
 
 
@@ -204,17 +206,15 @@ bot.on('add_dj',function(data){
 			botOnSet=false;}
 	}
 
-	var user = data.user[0];
-	if (user.name.match(/evil_mace/)) {
-		bot.speak("Kick it @evil_mace");
+	var spoke = false;
+	var rand = Math.floor((Math.random()*100)+1);
+	if (rand < PCT_RESP_START_DJ) {
+		var user = data.user[0];
+		if(user.name !== 'spice_bot') {
+			bot.speak(START_DJ[rand % QUIT_DJ.length].replace(/%%/g, '@'+user.name));
+			spoke = true;
+		}
 	}
-	if (user.name.match(/Eric S \(Dev\)/)) {
-		bot.speak("Alright, here we go, @Eric S (Dev)");
-	}
-	if (user.name.match(/Eric Fr/)) {
-		bot.speak("Nothing too slow now, ok @EFW?");
-	}
-	
 });
 
 
