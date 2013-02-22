@@ -302,5 +302,37 @@ commands = [
     },
     help: 'make the bot say stuff using \"\'s',
     show: false
-  }
-];
+  },
+  {
+    name: 'weather',
+    match: function(text) {
+      return text.match(/^bot weather$/);
+    },
+    command: function(data) {
+      var request = require("request");
+      request("http://query.yahooapis.com/v1/public/yql?q=select%20item.description%20from%20weather.forecast%20where%20woeid%3D%202357536&format=json&diagnostics=false", function(error, response, body) {
+        var json = JSON.parse(body);
+        var weather = json.query.results.channel.item.description.match(/(Current Conditions[\s\S]*?)<a/i)[1].replace(/(<\/?B\s*?>|\n|\r)/gi, '').split(/<\/?BR.*?>/i)
+        weather.forEach(function(item){
+          bot.speak(item);  
+          // console.log(item);
+          bot.sleep(200);
+        });
+      });
+
+
+    },
+    help: 'get the weather in Austin',
+    show: true
+  },
+  {
+    name: 'time',
+    match: function(text) {
+      return text.match(/^bot (time|date)$/);
+    },
+    command: function(data) {
+      bot.speak(new Date());
+    },
+    help: 'get the current date/time',
+    show: true
+  }];

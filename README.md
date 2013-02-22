@@ -15,3 +15,4 @@ Some assembly required.
 What you'll need:
 * [Node.js](http://nodejs.org)
 * [Turntable-API](https://github.com/alaingilbert/Turntable-API/)
+* npm install request
