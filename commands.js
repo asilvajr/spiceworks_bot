@@ -326,6 +326,26 @@ commands = [
     show: true
   },
   {
+    name: 'stocks',
+    match: function(text) {
+      return text.match(/^bot (market|stocks)$/);
+    },
+    command: function(data) {
+      var request = require("request");
+      request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20in%20('.DJI'%2C%20'.INX'%2C%20'.ixic')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
+        var json = JSON.parse(body);
+        var quotes = json.query.results.xml_api_reply;
+        quotes.forEach(function(item){
+          var company = item.finance.company.data.replace(' Industrial Average', '').replace('Composite', '');
+          bot.speak(company+':  $'+item.finance.last.data);
+          bot.sleep(200);
+        });
+      });
+    },
+    help: 'Check the stock market indices',
+    show: true
+  },
+  {
     name: 'time',
     match: function(text) {
       return text.match(/^bot (time|date)$/);
