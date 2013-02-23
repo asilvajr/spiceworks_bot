@@ -180,7 +180,7 @@ bot.on('rem_dj',function(data){
 		}
 	}
 
-	if(dj_count < 5 && user_count > dj_count + 1 && !spoke) {
+	if(dj_count < 5 && user_count > dj_count + 1 && !spoke && user.name !== 'spice_bot') {
 		bot.speak("OK, who's gonna step up and DJ now?  Come on listeners - we need some music!")
 	}
 });
