@@ -151,6 +151,7 @@ bot.on('endsong',function(data){
 });
 
 bot.on('rem_dj',function(data){
+	var user = data.user[0];
 	if(VERBOSE) bot.speak("rem_dj");	
 	dj_count--;
 	if(dj_count<0){
@@ -165,6 +166,7 @@ bot.on('rem_dj',function(data){
 			botOnSet=false;
 		}
 	}
+	
 	if(dj_count==1 && !botOnSet){ //only one user is playing, bot jumps on
 		bot.addDj();
 		botOnSet=true;
@@ -173,7 +175,7 @@ bot.on('rem_dj',function(data){
 	var spoke = false;
 	var rand = Math.floor((Math.random()*100)+1);
 	if (rand < PCT_RESP_QUIT_DJ) {
-		var user = data.user[0];
+		
 		if(user.name !== 'spice_bot') {
 			bot.speak(QUIT_DJ[rand % QUIT_DJ.length].replace(/%%/g, '@'+user.name));
 			spoke = true;
@@ -181,7 +183,7 @@ bot.on('rem_dj',function(data){
 	}
 
 	if(dj_count < 5 && user_count > dj_count + 1 && !spoke && user.name !== 'spice_bot') {
-		bot.speak("OK, who's gonna step up and DJ now?  Come on listeners - we need some music!")
+		bot.speak("OK, who's gonna step up and DJ now?  Come on listeners - we need some music!");
 	}
 });
 
