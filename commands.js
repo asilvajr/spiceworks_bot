@@ -274,6 +274,17 @@ commands = [
     show: true
   },
   {
+    name: 'smile',
+    match: function(text) {
+      return text.match(/^bot smile$/);
+    },
+    command: function(data) {
+      bot.speak('(́◉◞౪◟◉‵)');
+    },
+    help: 'make me smile',
+    show: true
+  },
+  {
     name: 'disapprove',
     match: function(text) {
       return text.match(/^bot (disapprove|glare)$/);
