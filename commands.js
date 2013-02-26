@@ -357,6 +357,25 @@ commands = [
     show: true
   },
   {
+    name: 'stock',
+    match: function(text) {
+      return text.match(/^bot stock \S+$/);
+    },
+    command: function(data) {
+      var stock = data.text.replace(/^bot stock /, '');
+      var request = require("request");
+      request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20=%20'" + stock + "'%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
+        var json = JSON.parse(body);
+        var quotes = json.query.results.xml_api_reply.finance;
+        var company = quotes.company.data;
+        var price = quotes.last.data;
+        bot.speak(company + ': $' + price);
+      });
+    },
+    help: 'Check the stock market indices',
+    show: true
+  },
+  {
     name: 'time',
     match: function(text) {
       return text.match(/^bot (time|date)$/);
