@@ -339,13 +339,13 @@ commands = [
   {
     name: 'pizza',
     match: function(text) {
-      return text.match(/^bot (get)?.*pizza$/);
+      return text.match(/^bot (get)?.*pizza( now!?)?$/);
     },
     command: function(data) {
       var request = require("request");
       bot.speak("Oh yeah!  Gettin' some 'Za");
       bot.sleep(200);
-      bot.speak("Uhhh... from where:");  
+      bot.speak("Uhhh... from where:");
       request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'pizza'&format=json&callback=", function(error, response, body) {
         debugger;
         var json = JSON.parse(body);
@@ -359,6 +359,31 @@ commands = [
 
     },
     help: 'get us some Pizza!!!',
+    show: true
+  },
+  {
+    name: 'asian',
+    match: function(text) {
+      return text.match(/^bot (get)?.*asian( food)?( now!?)?$/);
+    },
+    command: function(data) {
+      var request = require("request");
+      bot.speak("Alright!  Time for good Asian food!");
+      bot.sleep(200);
+      bot.speak("Uhhh... from where:");
+      request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'asian'&format=json&callback=", function(error, response, body) {
+        debugger;
+        var json = JSON.parse(body);
+        json.query.results.Result.forEach(function(item){
+          var asian = item.Title;
+          bot.speak("- " + asian);
+          // bot.sleep(200);
+        });
+      });
+
+
+    },
+    help: 'get us some Asian Food!!!',
     show: true
   },
   {
