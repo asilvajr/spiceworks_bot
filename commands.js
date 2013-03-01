@@ -346,13 +346,13 @@ commands = [
       bot.speak("Oh yeah!  Gettin' some 'Za");
       bot.sleep(200);
       bot.speak("Uhhh... from where:");  
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'pizza'&format=json&callback=", function(error, response, body) {
+      request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'pizza'&format=json&callback=", function(error, response, body) {
         debugger;
         var json = JSON.parse(body);
         json.query.results.Result.forEach(function(item){
           var pizza = item.Title;
           bot.speak("- " + pizza);  
-          bot.sleep(200);
+          // bot.sleep(200);
         });
       });
 
