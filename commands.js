@@ -426,6 +426,38 @@ commands = [
     show: true
   },
   {
+    name: 'moon',
+    match: function(text) {
+      return text.match(/^bot moon(\s?phase)?$/);
+    },
+    command: function(data) {
+      var now = new Date();
+      var req = {
+        uri: 'http://aa.usno.navy.mil/cgi-bin/aa_pap.pl',
+        form: {
+          xxy: now.getFullYear(),
+          xxm: now.getMonth() + 1,
+          xxd: now.getDate(),
+          st: 'TX',
+          place: 'austin',
+          FFX: 1,
+          ID: 'AA',
+          uri: 'http://aa.usno.navy.mil/cgi-bin/aa_pap.pl'
+        }
+      };
+      var request = require("request");
+      request.post(req, function(error, response, body) {
+        // Hack: too late at night to do this correctly...need to refactor
+        var phase = body.replace(/(\s+|&nbsp;)/g, ' ').replace(/.*Phase of the Moon on.*?:\s*/, '').replace(/(\s*disk.*)/, '').replace(" of the Moon\'s", '');
+        bot.speak('The moon is:');
+        bot.sleep(200);
+        bot.speak(phase);
+      });
+    },
+    help: 'Check the current phase of the moon',
+    show: true
+  },
+  {
     name: 'time',
     match: function(text) {
       return text.match(/^bot (time|date)$/);
