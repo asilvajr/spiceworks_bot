@@ -387,6 +387,26 @@ commands = [
     show: true
   },
   {
+    name: 'dice',
+    match: function(text) {
+      return text.match(/^bot (roll .*)?dice$/);
+    },
+    command: function(data) {
+      var request = require("request");
+      var max = 6;
+      for(var i = 0; i < 3; i += 1) {
+        bot.speak("Rollin'");
+        bot.sleep(200);
+      }
+      var d = Math.floor((Math.random() * max) + 1);
+      bot.speak("And... it's... a...");
+      bot.sleep(200);
+      bot.speak(d);
+    },
+    help: 'Roll the dice',
+    show: true
+  },
+  {
     name: 'stocks',
     match: function(text) {
       return text.match(/^bot (market|stocks)$/);
