@@ -320,8 +320,7 @@ commands = [
       return text.match(/^bot weather$/);
     },
     command: function(data) {
-      var request = require("request");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20item.description%20from%20weather.forecast%20where%20woeid%3D%202357536&format=json&diagnostics=false", function(error, response, body) {
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20item.description%20from%20weather.forecast%20where%20woeid%3D%202357536&format=json&diagnostics=false", function(error, response, body) {
         var json = JSON.parse(body);
         var weather = json.query.results.channel.item.description.match(/(Current Conditions[\s\S]*?)<a/i)[1].replace(/(<\/?B\s*?>|\n|\r)/gi, '').split(/<\/?BR.*?>/i)
         weather.forEach(function(item){
@@ -342,12 +341,10 @@ commands = [
       return text.match(/^bot (get)?.*pizza( now!?)?$/);
     },
     command: function(data) {
-      var request = require("request");
       bot.speak("Oh yeah!  Gettin' some 'Za");
       bot.sleep(200);
       bot.speak("Uhhh... from where:");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'pizza'&format=json&callback=", function(error, response, body) {
-        debugger;
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'pizza'&format=json&callback=", function(error, response, body) {
         var json = JSON.parse(body);
         json.query.results.Result.forEach(function(item){
           var pizza = item.Title;
@@ -367,12 +364,10 @@ commands = [
       return text.match(/^bot (get)?.*asian( food)?( now!?)?$/);
     },
     command: function(data) {
-      var request = require("request");
       bot.speak("Alright!  Time for good Asian food!");
       bot.sleep(200);
       bot.speak("Uhhh... from where:");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'asian'&format=json&callback=", function(error, response, body) {
-        debugger;
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'asian'&format=json&callback=", function(error, response, body) {
         var json = JSON.parse(body);
         json.query.results.Result.forEach(function(item){
           var asian = item.Title;
@@ -392,7 +387,6 @@ commands = [
       return text.match(/^bot (roll .*)?dice$/);
     },
     command: function(data) {
-      var request = require("request");
       var max = 6;
       for(var i = 0; i < 3; i += 1) {
         bot.speak("Rollin'");
@@ -412,8 +406,7 @@ commands = [
       return text.match(/^bot (market|stocks)$/);
     },
     command: function(data) {
-      var request = require("request");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20in%20('.DJI'%2C%20'.INX'%2C%20'.ixic')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20in%20('.DJI'%2C'.INX'%2C'.ixic')&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
         var json = JSON.parse(body);
         var quotes = json.query.results.xml_api_reply;
         quotes.forEach(function(item){
@@ -433,8 +426,7 @@ commands = [
     },
     command: function(data) {
       var stock = data.text.replace(/^bot stock /, '');
-      var request = require("request");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20=%20'" + stock + "'%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20=%20'" + stock + "'%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
         var json = JSON.parse(body);
         var quotes = json.query.results.xml_api_reply.finance;
         var company = quotes.company.data;
@@ -442,7 +434,7 @@ commands = [
         bot.speak(company + ': $' + price);
       });
     },
-    help: 'Check the stock market indices',
+    help: 'Check a stock price',
     show: true
   },
   {
@@ -465,8 +457,7 @@ commands = [
           uri: 'http://aa.usno.navy.mil/cgi-bin/aa_pap.pl'
         }
       };
-      var request = require("request");
-      request.post(req, function(error, response, body) {
+      bot.request.post(req, function(error, response, body) {
         // Hack: too late at night to do this correctly...need to refactor
         var phase = body.replace(/(\s+|&nbsp;)/g, ' ').replace(/.*Phase of the Moon on.*?:\s*/, '').replace(/(\s*disk.*)/, '').replace(" of the Moon\'s", '');
         bot.speak('The moon is:');

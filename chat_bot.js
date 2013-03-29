@@ -1,5 +1,6 @@
 var Bot  = require('ttapi');
 var creds = require('./info');
+var sleep = require('sleep');
 
 require('./commands.js');
 require('./messages.js');
@@ -25,6 +26,12 @@ djs = [];
 moderators = [];
 
 bot = new Bot(AUTH, USERID, ROOMID);
+
+bot.sleep = function(milliseconds){
+	sleep.usleep(milliseconds * 1000);
+}
+
+bot.request = require("request");
 
 function applyCommands(data) {
   // Get the data
