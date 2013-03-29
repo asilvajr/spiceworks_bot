@@ -1,14 +1,6 @@
 var Bot  = require('ttapi');
 var creds = require('./info');
-var PORT
 
-PORT = process.env.PORT || 3000;
-
-app.listen(PORT, function() {
-  return console.log("#server is starting on port: " + PORT);
-});
-
-// experimental, need Angel to verify if this works...
 require('./commands.js');
 require('./messages.js');
 
