@@ -26,11 +26,6 @@ djs = [];
 moderators = [];
 
 bot = new Bot(AUTH, USERID, ROOMID);
-
-bot.sleep = function(milliseconds){
-	sleep.usleep(milliseconds * 1000);
-}
-
 bot.request = require("request");
 
 function applyCommands(data) {
@@ -80,7 +75,7 @@ bot.on('newsong', function(data){
 		bot.speak('bos' + botOnSet);
 	}
 	
-	if(dj_count == 1 && !botOnSet) {
+	if(dj_count === 1 && !botOnSet && !botCurrentlyPlaying) {
 		bot.addDj();
 		botOnSet = true;
 		bot.speak("Oh, didn't see ya playin my bad");
@@ -95,7 +90,7 @@ bot.on('roomChanged', function(data) {
 	
 	user_count = users.length;
 	dj_count = djs.length;
-	if(dj_count==1) {
+	if(dj_count == 1) {
 		bot.addDj();
 		botOnSet=true;
 		bot.speak("You've been playing alone :( I'll join")
@@ -117,8 +112,6 @@ bot.on('registered', function(data) {
 		if(user.name !== 'spice_bot') {
 			bot.speak("Hey there, @" + user.name + "!\nType \"bot help\" for assistance.");
 		}
-
-
 	}
 });
 
@@ -138,8 +131,8 @@ bot.on('snagged',function(data){
 bot.on('endsong',function(data){
 	if(VERBOSE) bot.speak("endsong");
 	if(jumpOffAfterSong) {
-		bot.remDj();
 		botOnSet = false;
+		bot.remDj();
 		//if(dj_count > 1 || dj_count <= 3) {
 		//	bot.remDj();
 		//	jumpOffAfterSong=false;
@@ -159,8 +152,8 @@ bot.on('rem_dj',function(data){
 		if(botCurrentlyPlaying) 
 			{jumpOffAfterSong=true;} 
 		else {
-			bot.remDj();
 			botOnSet=false;
+			bot.remDj();
 		}
 	}
 	
@@ -201,8 +194,9 @@ bot.on('add_dj',function(data){
 		if(botCurrentlyPlaying) //if he is playing, he jumps off after
 			{jumpOffafterSong = true;}
 		else{ 
-			bot.remDj();
 			botOnSet=false;}
+			bot.remDj();
+			
 	}
 
 	var spoke = false;
