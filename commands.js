@@ -328,11 +328,11 @@ commands = [
     command: function(data) {
 	  var message = data.text;
 	  if (message.match(/\".*\"/)){
-		message = message.replace(/^(bot|@spice_bot) say"/, '');
+		message = message.replace(/^(bot|@spice_bot) say:?"/, '');
 		message = message.replace(/"/, '');
 	  }
 	  else{
-		var message = message.replace(/^bot say/, '');
+		var message = message.replace(/^bot say:?/, '');
 	  }
       bot.speak(message);
     },
