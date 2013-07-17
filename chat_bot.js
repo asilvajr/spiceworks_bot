@@ -22,6 +22,10 @@ botSetIndex = -1;
 currentDj=0;
 user_count = 0;
 dj_count = 0;
+up_votes=0;
+down_votes=0;
+snag_count=0;
+
 djs = [];
 moderators = [];
 commandLock = false;
@@ -90,6 +94,12 @@ bot.roomInfo(true, function(data) {
 		botSetIndex = djs.indexOf(botUserId)
 };
 
+bot.on('update_votes', function(data){
+	if(VERBOSE) bot.speak("update votes");
+	up_votes = data.room.metadata.upvotes;
+	down_votes = data.room.metadata.downvotes;
+});
+
 bot.on('newsong', function(data){
 	if(VERBOSE) bot.speak("newsong");
 	//var vote_count = data.room.metadata.upvotes;
@@ -156,12 +166,10 @@ bot.on('deregistered',function(data){
 	user_count--;
 });
 
-bot.on('updated_votes',function(data){
-	if(VERBOSE) bot.speak("update votes");	
-});
 
 bot.on('snagged',function(data){
 	if(VERBOSE) bot.speak("snagged");	
+	snag_cout++;
 });
 
 bot.on('endsong',function(data){
@@ -171,9 +179,18 @@ bot.on('endsong',function(data){
 		bot.remDj();
 		//if(dj_count > 1 || dj_count <= 3) {
 		//	bot.remDj();
-		//	jumpOffAfterSong=false;
+		//	jumpOffAfterSong=false; 
 		//}
 	}
+	
+	up_votes = data.room.metadata.upvotes;
+	down_votes = data.room.metadata.downvotes;
+	bot.speak(":thumbsup:" + up_votes + ":thumbsdown: " + down_votes);
+	bot.speak(":heart:" + snag_count);
+	up_votes=0;
+	down_votes=0;
+	snag_count=0;
+	
 });
 
 bot.on('rem_dj',function(data){
