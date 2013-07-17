@@ -24,27 +24,63 @@ user_count = 0;
 dj_count = 0;
 djs = [];
 moderators = [];
+commandLock = false;
+commandCallbacks = [];
 
 bot = new Bot(AUTH, USERID, ROOMID);
 bot.request = require("request");
+ 
+function guessingGame(data){
+	guessingGameOn = true;
+	guessingGameNumber = Math.floor(Math.random()*10)+1;
+	bot.speak("Alright @"+data.name+", let's play the guessing game!");
+	bot.speak("I'm thinking of a number 1-10... Can you guess it?");
+	bot.on('speak', findNumber);
+}
+
+function findNumber(data){
+    if (guessingGameOn){
+	    if (data.text.match(/quit guessing game/)){
+	      bot.speak("Aww, @"+data.name+". I guess we'll stop playing...");
+	      guessingGameOn = false;
+	    }
+	    else if (parseInt(data.text) == guessingGameNumber){
+	      bot.speak("Yay @"+data.name+"! You guessed the correct number! The correct number was "+guessingGameNumber+".");
+	      guessingGameOn = false;
+	    }
+	}
+ }
 
 function applyCommands(data) {
   // Get the data
   var name = data.name;
   var text = data.text;
-  
-  // loop over commands and execute them if there's a match
-  for(i = 0; i < commands.length; i++) {
-    var command = commands[i];
-    if(command.match(text)) {
-      command.command(data);
-    }
+  if (data.text.match(/^bot guessing game$/)){
+  	guessingGame(data);
   }
+  else{
+  // loop over commands and execute them if there's a match
+	  for(i = 0; i < commands.length; i++) {
+	    var command = commands[i];
+	    if(command.match(text)) {
+	      command.command(data);
+	    }
+	  }
+	}
 }
 
-bot.on('speak', applyCommands);
-bot.on('pmmed', applyCommands);
-
+// This is where the magic happens: Spin locking commands so that he doesn't interleave command responses
+commandCallbacks.push(bot.on('speak', applyCommands));
+commandCallbacks.push(bot.on('pmmed', applyCommands));
+while(commandCallbacks.length > 0){
+	while (commandLock){ // spin lock 
+	}
+	var thisCallback = commandCallbacks.shift();
+	commandLock = true;
+	thisCallback;
+	commandLock = false;
+}
+	
 function updateDjs() {
 bot.roomInfo(true, function(data) {
 	 /* Update the list since we are here */

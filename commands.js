@@ -20,12 +20,37 @@ commands = [
   {
     name: 'hello',
     match: function(text) {
-      return (text.match(/^hello$/) || text.match(/^hey bot$/) || text.match(/^hi.*quik_mace/));
+      return (text.match(/^hello$/) || text.match(/^hey bot$/));
     },
     command: function(data) {
       bot.speak('Hey! How are ya @'+data.name+'?');
     },
     help: 'say hello or whatever',
+    show: false
+  },
+  {
+    name: 'funny',
+    match: function(text){
+      return (text.toLowerCase().match(/^haha$/)|| text.match(/^hehe$/) || text.match(/^lol$/));
+    },
+    command: function(data){
+      //bot.speak('What\'s so funny @'+data.name+'?');
+      var rand = Math.floor((Math.random()*100)+1);
+      bot.speak(WHATS_FUNNY[rand % WHATS_FUNNY.length].replace(/%%/g, '@'+data.name));
+    },
+    help: 'laugh at something',
+    show: false
+  },
+  {
+    name: 'thanks',
+    match: function(text){
+      return (text.toLowerCase().match(/thank.*(spice|)bot/));
+    },
+    command: function(data){
+      var rand = Math.floor((Math.random()*100)+1);
+      bot.speak(YOURE_WELCOME[rand % YOURE_WELCOME.length].replace(/%%/g, '@'+data.name));
+    },
+    help: 'tell spice bot thank you',
     show: false
   },
   {
@@ -244,7 +269,7 @@ commands = [
     help: 'toggle autobot',
     show: true
   },
-  {
+  { // TODO: Needs a fix because sometimes there are 11 PMs sent
     name: 'help',
     match: function(text) {
       return text.match(/^bot help$/);
@@ -324,9 +349,9 @@ commands = [
         var json = JSON.parse(body);
         var weather = json.query.results.channel.item.description.match(/(Current Conditions[\s\S]*?)<a/i)[1].replace(/(<\/?B\s*?>|\n|\r)/gi, '').split(/<\/?BR.*?>/i)
         weather.forEach(function(item){
-          bot.speak(item);  
+          setTimeout(function() {bot.speak(item);}, 200) 
           // console.log(item);
-          bot.sleep(200);
+          setTimeout(function() {}, 200)
         });
       });
 
@@ -381,23 +406,19 @@ commands = [
     help: 'get us some Asian Food!!!',
     show: true
   },
-  {
-    name: 'dice',
+  
+  { 
+    name: 'roll',
     match: function(text) {
-      return text.match(/^bot (roll .*)?dice$/);
+      return text.match(/^bot roll$/);
     },
     command: function(data) {
-      var max = 6;
-      for(var i = 0; i < 3; i += 1) {
-        bot.speak("Rollin'");
-        bot.sleep(200);
-      }
-      var d = Math.floor((Math.random() * max) + 1);
-      bot.speak("And... it's... a...");
-      bot.sleep(200);
-      bot.speak(d);
+      var number = Math.floor(Math.random()*100)+1
+      setTimeout(function() {setTimeout( function() {setTimeout(function(){bot.speak("Rolling my 100-sided die...");}, 200)
+      setTimeout(function(){bot.speak("And... it's...");}, 700)}, 200)
+      setTimeout(function(){bot.speak(number);}, 1000)}, 100)
     },
-    help: 'Roll the dice',
+    help: 'roll 100-sided die',
     show: true
   },
   {
