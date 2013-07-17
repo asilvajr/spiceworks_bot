@@ -332,7 +332,7 @@ commands = [
 		message = message.replace(/"/, '');
 	  }
 	  else{
-		var message = message.replace(/^bot say /, '');
+		var message = message.replace(/^bot say/, '');
 	  }
       bot.speak(message);
     },
