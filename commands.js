@@ -328,7 +328,7 @@ commands = [
     command: function(data) {
 	  var message = data.text;
 	  if (message.match(/\".*\"/)){
-		message = message.replace(/^(bot|@spice_bot) say "/, '');
+		message = message.replace(/^(bot|@spice_bot) say"/, '');
 		message = message.replace(/"/, '');
 	  }
 	  else{
