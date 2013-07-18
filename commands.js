@@ -20,12 +20,37 @@ commands = [
   {
     name: 'hello',
     match: function(text) {
-      return (text.match(/^hello$/) || text.match(/^hey bot$/) || text.match(/^hi.*quik_mace/));
+      return (text.match(/^hello$/) || text.match(/^hey bot$/));
     },
     command: function(data) {
       bot.speak('Hey! How are ya @'+data.name+'?');
     },
     help: 'say hello or whatever',
+    show: false
+  },
+  {
+    name: 'funny',
+    match: function(text){
+      return (text.toLowerCase().match(/^haha$/)|| text.match(/^hehe$/) || text.match(/^lol$/));
+    },
+    command: function(data){
+      //bot.speak('What\'s so funny @'+data.name+'?');
+      var rand = Math.floor((Math.random()*100)+1);
+      bot.speak(WHATS_FUNNY[rand % WHATS_FUNNY.length].replace(/%%/g, '@'+data.name));
+    },
+    help: 'laugh at something',
+    show: false
+  },
+  {
+    name: 'thanks',
+    match: function(text){
+      return (text.toLowerCase().match(/thank.*(spice|)bot/));
+    },
+    command: function(data){
+      var rand = Math.floor((Math.random()*100)+1);
+      bot.speak(YOURE_WELCOME[rand % YOURE_WELCOME.length].replace(/%%/g, '@'+data.name));
+    },
+    help: 'tell spice bot thank you',
     show: false
   },
   {
@@ -244,7 +269,7 @@ commands = [
     help: 'toggle autobot',
     show: true
   },
-  {
+  { // TODO: Needs a fix because sometimes there are 11 PMs sent
     name: 'help',
     match: function(text) {
       return text.match(/^bot help$/);
@@ -302,13 +327,7 @@ commands = [
     },
     command: function(data) {
 	  var message = data.text;
-	  if (message.match(/\".*\"/)){
-		message = message.replace(/^(bot|@spice_bot) say "/, '');
-		message = message.replace(/"/, '');
-	  }
-	  else{
-		var message = message.replace(/^bot say /, '');
-	  }
+		var message = message.replace(/^bot say(:+)?/, '');
       bot.speak(message);
     },
     help: 'make the bot say stuff using \"\'s',
@@ -320,14 +339,13 @@ commands = [
       return text.match(/^bot weather$/);
     },
     command: function(data) {
-      var request = require("request");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20item.description%20from%20weather.forecast%20where%20woeid%3D%202357536&format=json&diagnostics=false", function(error, response, body) {
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20item.description%20from%20weather.forecast%20where%20woeid%3D%202357536&format=json&diagnostics=false", function(error, response, body) {
         var json = JSON.parse(body);
         var weather = json.query.results.channel.item.description.match(/(Current Conditions[\s\S]*?)<a/i)[1].replace(/(<\/?B\s*?>|\n|\r)/gi, '').split(/<\/?BR.*?>/i)
         weather.forEach(function(item){
-          bot.speak(item);  
+          setTimeout(function() {bot.speak(item);}, 200) 
           // console.log(item);
-          bot.sleep(200);
+          setTimeout(function() {}, 200)
         });
       });
 
@@ -342,12 +360,10 @@ commands = [
       return text.match(/^bot (get)?.*pizza( now!?)?$/);
     },
     command: function(data) {
-      var request = require("request");
       bot.speak("Oh yeah!  Gettin' some 'Za");
       bot.sleep(200);
       bot.speak("Uhhh... from where:");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'pizza'&format=json&callback=", function(error, response, body) {
-        debugger;
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'pizza'&format=json&callback=", function(error, response, body) {
         var json = JSON.parse(body);
         json.query.results.Result.forEach(function(item){
           var pizza = item.Title;
@@ -367,12 +383,10 @@ commands = [
       return text.match(/^bot (get)?.*asian( food)?( now!?)?$/);
     },
     command: function(data) {
-      var request = require("request");
       bot.speak("Alright!  Time for good Asian food!");
       bot.sleep(200);
       bot.speak("Uhhh... from where:");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'asian'&format=json&callback=", function(error, response, body) {
-        debugger;
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20Title%20from%20local.search%20where%20zip%3D'78730'%20and%20query%3D'asian'&format=json&callback=", function(error, response, body) {
         var json = JSON.parse(body);
         json.query.results.Result.forEach(function(item){
           var asian = item.Title;
@@ -386,24 +400,19 @@ commands = [
     help: 'get us some Asian Food!!!',
     show: true
   },
-  {
-    name: 'dice',
+  
+  { 
+    name: 'roll',
     match: function(text) {
-      return text.match(/^bot (roll .*)?dice$/);
+      return text.match(/^bot roll$/);
     },
     command: function(data) {
-      var request = require("request");
-      var max = 6;
-      for(var i = 0; i < 3; i += 1) {
-        bot.speak("Rollin'");
-        bot.sleep(200);
-      }
-      var d = Math.floor((Math.random() * max) + 1);
-      bot.speak("And... it's... a...");
-      bot.sleep(200);
-      bot.speak(d);
+      var number = Math.floor(Math.random()*100)+1
+      setTimeout(function() {setTimeout( function() {setTimeout(function(){bot.speak("Rolling my 100-sided die...");}, 200)
+      setTimeout(function(){bot.speak("And... it's...");}, 700)}, 200)
+      setTimeout(function(){bot.speak(number);}, 1000)}, 100)
     },
-    help: 'Roll the dice',
+    help: 'roll 100-sided die',
     show: true
   },
   {
@@ -412,8 +421,7 @@ commands = [
       return text.match(/^bot (market|stocks)$/);
     },
     command: function(data) {
-      var request = require("request");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20in%20('.DJI'%2C%20'.INX'%2C%20'.ixic')%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20in%20('.DJI'%2C'.INX'%2C'.ixic')&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
         var json = JSON.parse(body);
         var quotes = json.query.results.xml_api_reply;
         quotes.forEach(function(item){
@@ -433,8 +441,7 @@ commands = [
     },
     command: function(data) {
       var stock = data.text.replace(/^bot stock /, '');
-      var request = require("request");
-      request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20=%20'" + stock + "'%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
+      bot.request("http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20google.igoogle.stock%20where%20stock%20=%20'" + stock + "'%3B&format=json&env=store%3A%2F%2Fdatatables.org%2Falltableswithkeys&callback=", function(error, response, body) {
         var json = JSON.parse(body);
         var quotes = json.query.results.xml_api_reply.finance;
         var company = quotes.company.data;
@@ -442,7 +449,7 @@ commands = [
         bot.speak(company + ': $' + price);
       });
     },
-    help: 'Check the stock market indices',
+    help: 'Check a stock price',
     show: true
   },
   {
@@ -465,8 +472,7 @@ commands = [
           uri: 'http://aa.usno.navy.mil/cgi-bin/aa_pap.pl'
         }
       };
-      var request = require("request");
-      request.post(req, function(error, response, body) {
+      bot.request.post(req, function(error, response, body) {
         // Hack: too late at night to do this correctly...need to refactor
         var phase = body.replace(/(\s+|&nbsp;)/g, ' ').replace(/.*Phase of the Moon on.*?:\s*/, '').replace(/(\s*disk.*)/, '').replace(" of the Moon\'s", '');
         bot.speak('The moon is:');

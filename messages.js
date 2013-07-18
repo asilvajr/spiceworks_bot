@@ -13,3 +13,17 @@ START_DJ = [
   "Nothing too slow now %% - don't put us to sleep ok?",
   "Awsimio %% is on the stage!"
 ];
+
+WHATS_FUNNY = [
+  "What's so funny %%?",
+  "You got jokes %%?",
+  "Huehuehue",
+  "Something funny %%?"
+];
+
+YOURE_WELCOME = [
+  "You're welcome %%. :smile:",
+  "Anything for you %%.",
+  "No problem %%.",
+  "Don't sweat it %%."
+];

@@ -1,11 +1,7 @@
 var Bot  = require('ttapi');
 var creds = require('./info');
-var PORT
+var sleep = require('sleep');
 
-PORT = process.env.PORT || 3000;
-
-
-// experimental, need Angel to verify if this works...
 require('./commands.js');
 require('./messages.js');
 
@@ -26,28 +22,69 @@ botSetIndex = -1;
 currentDj=0;
 user_count = 0;
 dj_count = 0;
+up_votes=0;
+down_votes=0;
+snag_count=0;
+
 djs = [];
 moderators = [];
+commandLock = false;
+commandCallbacks = [];
 
 bot = new Bot(AUTH, USERID, ROOMID);
+bot.request = require("request");
+ 
+function guessingGame(data){
+	guessingGameOn = true;
+	guessingGameNumber = Math.floor(Math.random()*10)+1;
+	bot.speak("Alright @"+data.name+", let's play the guessing game!");
+	bot.speak("I'm thinking of a number 1-10... Can you guess it?");
+	bot.on('speak', findNumber);
+}
+
+function findNumber(data){
+    if (guessingGameOn){
+	    if (data.text.match(/quit guessing game/)){
+	      bot.speak("Aww, @"+data.name+". I guess we'll stop playing...");
+	      guessingGameOn = false;
+	    }
+	    else if (parseInt(data.text) == guessingGameNumber){
+	      bot.speak("Yay @"+data.name+"! You guessed the correct number! The correct number was "+guessingGameNumber+".");
+	      guessingGameOn = false;
+	    }
+	}
+ }
 
 function applyCommands(data) {
   // Get the data
   var name = data.name;
   var text = data.text;
-  
-  // loop over commands and execute them if there's a match
-  for(i = 0; i < commands.length; i++) {
-    var command = commands[i];
-    if(command.match(text)) {
-      command.command(data);
-    }
+  if (data.text.match(/^bot guessing game$/)){
+  	guessingGame(data);
   }
+  else{
+  // loop over commands and execute them if there's a match
+	  for(i = 0; i < commands.length; i++) {
+	    var command = commands[i];
+	    if(command.match(text)) {
+	      command.command(data);
+	    }
+	  }
+	}
 }
 
-bot.on('speak', applyCommands);
-bot.on('pmmed', applyCommands);
-
+// This is where the magic happens: Spin locking commands so that he doesn't interleave command responses
+commandCallbacks.push(bot.on('speak', applyCommands));
+commandCallbacks.push(bot.on('pmmed', applyCommands));
+while(commandCallbacks.length > 0){
+	while (commandLock){ // spin lock 
+	}
+	var thisCallback = commandCallbacks.shift();
+	commandLock = true;
+	thisCallback;
+	commandLock = false;
+}
+	
 function updateDjs() {
 bot.roomInfo(true, function(data) {
 	 /* Update the list since we are here */
@@ -56,6 +93,12 @@ bot.roomInfo(true, function(data) {
 		moderators = data.room.metadata.moderator_id;});
 		botSetIndex = djs.indexOf(botUserId)
 };
+
+bot.on('update_votes', function(data){
+	if(VERBOSE) bot.speak("update votes");
+	up_votes = data.room.metadata.upvotes;
+	down_votes = data.room.metadata.downvotes;
+});
 
 bot.on('newsong', function(data){
 	if(VERBOSE) bot.speak("newsong");
@@ -78,7 +121,7 @@ bot.on('newsong', function(data){
 		bot.speak('bos' + botOnSet);
 	}
 	
-	if(dj_count == 1 && !botOnSet) {
+	if(dj_count === 1 && !botOnSet && !botCurrentlyPlaying) {
 		bot.addDj();
 		botOnSet = true;
 		bot.speak("Oh, didn't see ya playin my bad");
@@ -93,7 +136,7 @@ bot.on('roomChanged', function(data) {
 	
 	user_count = users.length;
 	dj_count = djs.length;
-	if(dj_count==1) {
+	if(dj_count == 1) {
 		bot.addDj();
 		botOnSet=true;
 		bot.speak("You've been playing alone :( I'll join")
@@ -115,8 +158,6 @@ bot.on('registered', function(data) {
 		if(user.name !== 'spice_bot') {
 			bot.speak("Hey there, @" + user.name + "!\nType \"bot help\" for assistance.");
 		}
-
-
 	}
 });
 
@@ -125,24 +166,31 @@ bot.on('deregistered',function(data){
 	user_count--;
 });
 
-bot.on('updated_votes',function(data){
-	if(VERBOSE) bot.speak("update votes");	
-});
 
 bot.on('snagged',function(data){
 	if(VERBOSE) bot.speak("snagged");	
+	snag_cout++;
 });
 
 bot.on('endsong',function(data){
 	if(VERBOSE) bot.speak("endsong");
 	if(jumpOffAfterSong) {
-		bot.remDj();
 		botOnSet = false;
+		bot.remDj();
 		//if(dj_count > 1 || dj_count <= 3) {
 		//	bot.remDj();
-		//	jumpOffAfterSong=false;
+		//	jumpOffAfterSong=false; 
 		//}
 	}
+	
+	up_votes = data.room.metadata.upvotes;
+	down_votes = data.room.metadata.downvotes;
+	bot.speak(":thumbsup:" + up_votes + ":thumbsdown: " + down_votes);
+	bot.speak(":heart:" + snag_count);
+	up_votes=0;
+	down_votes=0;
+	snag_count=0;
+	
 });
 
 bot.on('rem_dj',function(data){
@@ -157,8 +205,8 @@ bot.on('rem_dj',function(data){
 		if(botCurrentlyPlaying) 
 			{jumpOffAfterSong=true;} 
 		else {
-			bot.remDj();
 			botOnSet=false;
+			bot.remDj();
 		}
 	}
 	
@@ -199,8 +247,9 @@ bot.on('add_dj',function(data){
 		if(botCurrentlyPlaying) //if he is playing, he jumps off after
 			{jumpOffafterSong = true;}
 		else{ 
-			bot.remDj();
 			botOnSet=false;}
+			bot.remDj();
+			
 	}
 
 	var spoke = false;
