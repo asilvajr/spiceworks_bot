@@ -13,6 +13,7 @@ PCT_RESP_START_DJ = 50;
 botUserId = USERID;
 autobop = false;
 autoskip = false;
+autostats = true;
 
 botCurrentlyPlaying = false;
 jumpOffAfterSong = false;
@@ -105,13 +106,24 @@ function songStats(data){
 	up_votes = data.room.metadata.upvotes;
 	down_votes = data.room.metadata.downvotes;
 	var user = data.room.metadata.current_song.djname;
-	var song = data.room.metadata.current_song.metadata.song;
-	var artist = data.room.metadata.current_song.metadata.artist;
-	var stats_string ="@"+user+""+ artist+" - "+song + ": :heart:" + snag_count + ":thumbsup:" + up_votes + ":thumbsdown: " + down_votes;
+	var stats_str="@"+user+" played:"+ artist+" - "+song + ": :heart:" + snag_count + ":thumbsup:" + up_votes + ":thumbsdown: " + down_votes;
 	up_votes=0;
 	down_votes=0;
 	snag_count=0;
-	return stats_string;
+	return stats_str;
+}
+function fillSongInfo(data){
+	if(data.room.metadata.current_song){
+		artist = data.room.metadata.current_song.metadata.artist;
+		song = data.room.metadata.current_song.metadata.song;
+		album = data.room.metadata.current_song.metadata.album;
+		up_votes = data.room.metadata.upvotes;
+		down_votes = data.room.metadata.downvotes;
+	} else {
+		artist = "";
+		song = "";
+		album = "";
+	}
 }
 
 bot.on('update_votes', function(data){
@@ -122,7 +134,10 @@ bot.on('update_votes', function(data){
 
 bot.on('newsong', function(data){
 	if(VERBOSE) bot.speak("newsong");
-	//var vote_count = data.room.metadata.upvotes;
+	artist = data.room.metadata.current_song.metadata.artist;
+	song = data.room.metadata.current_song.metadata.song;
+	album = data.room.metadata.current_song.metadata.album;
+	
 	currentDj = data.room.metadata.current_dj;
 	
 	if(currentDj==botUserId) 
@@ -144,6 +159,7 @@ bot.on('newsong', function(data){
 bot.on('roomChanged', function(data) {
 	bot.speak("Annnnd Im back");
 	djs = data.room.metadata.djs;
+	fillSongInfo(data);
 	users = data.users;
 	
 	user_count = users.length;
@@ -157,6 +173,7 @@ bot.on('roomChanged', function(data) {
 
 bot.on('nosong', function(data) {
 	bot.speak('so quiet...');
+	fillSongInfo(data);
 });
 
 bot.on('registered', function(data) {
@@ -194,7 +211,8 @@ bot.on('endsong',function(data){
 		//	jumpOffAfterSong=false; 
 		//}
 	}
-	bot.speak(songStats(data));
+	if(autostats) bot.speak(songStats(data));
+	
 });
 
 bot.on('rem_dj',function(data){
