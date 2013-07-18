@@ -6,7 +6,6 @@ require('./commands.js');
 require('./messages.js');
 
 VERBOSE = false;
-M_VERBOSE = false;
 VOTED = false;
 VOTE_UP = 1;
 PCT_RESP_QUIT_DJ = 50;
@@ -26,6 +25,14 @@ up_votes=0;
 down_votes=0;
 snag_count=0;
 
+
+//song_info
+artist="";
+song="";
+album="";
+
+//room_info
+dj_name="";
 djs = [];
 moderators = [];
 commandLock = false;
@@ -94,6 +101,19 @@ bot.roomInfo(true, function(data) {
 		botSetIndex = djs.indexOf(botUserId)
 };
 
+function songStats(data){
+	up_votes = data.room.metadata.upvotes;
+	down_votes = data.room.metadata.downvotes;
+	var user = data.room.metadata.current_song.djname;
+	var song = data.room.metadata.current_song.metadata.song;
+	var artist = data.room.metadata.current_song.metadata.artist;
+	var stats_string ="@"+user+""+ artist+" - "+song + ": :heart:" + snag_count + ":thumbsup:" + up_votes + ":thumbsdown: " + down_votes;
+	up_votes=0;
+	down_votes=0;
+	snag_count=0;
+	return stats_string;
+}
+
 bot.on('update_votes', function(data){
 	if(VERBOSE) bot.speak("update votes");
 	up_votes = data.room.metadata.upvotes;
@@ -104,7 +124,7 @@ bot.on('newsong', function(data){
 	if(VERBOSE) bot.speak("newsong");
 	//var vote_count = data.room.metadata.upvotes;
 	currentDj = data.room.metadata.current_dj;
-
+	
 	if(currentDj==botUserId) 
 		{botCurrentlyPlaying=true;}
 	else 
@@ -112,14 +132,6 @@ bot.on('newsong', function(data){
 	if(botCurrentlyPlaying) 
 		{if(autoskip) {bot.skip();}}
 	if(autobop)  {bot.bop();}
-	if(M_VERBOSE) {
-		bot.speak('ab' + autobop);
-		bot.speak('as' + autoskip);
-		bot.speak("cid:"+currentDj);
-		bot.speak("bui:"+botUserId);
-		bot.speak('djc' + dj_count);
-		bot.speak('bos' + botOnSet);
-	}
 	
 	if(dj_count === 1 && !botOnSet && !botCurrentlyPlaying) {
 		bot.addDj();
@@ -169,7 +181,7 @@ bot.on('deregistered',function(data){
 
 bot.on('snagged',function(data){
 	if(VERBOSE) bot.speak("snagged");	
-	snag_cout++;
+	snag_count++;
 });
 
 bot.on('endsong',function(data){
@@ -182,15 +194,7 @@ bot.on('endsong',function(data){
 		//	jumpOffAfterSong=false; 
 		//}
 	}
-	
-	up_votes = data.room.metadata.upvotes;
-	down_votes = data.room.metadata.downvotes;
-	bot.speak(":thumbsup:" + up_votes + ":thumbsdown: " + down_votes);
-	bot.speak(":heart:" + snag_count);
-	up_votes=0;
-	down_votes=0;
-	snag_count=0;
-	
+	bot.speak(songStats(data));
 });
 
 bot.on('rem_dj',function(data){
