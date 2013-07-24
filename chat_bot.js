@@ -169,7 +169,7 @@ bot.on('deregistered',function(data){
 
 bot.on('snagged',function(data){
 	if(VERBOSE) bot.speak("snagged");	
-	snag_cout++;
+	snag_count++;
 });
 
 bot.on('endsong',function(data){
