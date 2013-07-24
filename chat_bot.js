@@ -6,7 +6,6 @@ require('./commands.js');
 require('./messages.js');
 
 VERBOSE = false;
-M_VERBOSE = false;
 VOTED = false;
 VOTE_UP = 1;
 PCT_RESP_QUIT_DJ = 50;
@@ -14,6 +13,7 @@ PCT_RESP_START_DJ = 50;
 botUserId = USERID;
 autobop = false;
 autoskip = false;
+autostats = true;
 
 botCurrentlyPlaying = false;
 jumpOffAfterSong = false;
@@ -26,6 +26,14 @@ up_votes=0;
 down_votes=0;
 snag_count=0;
 
+
+//song_info
+artist="";
+song="";
+album="";
+
+//room_info
+dj_name="";
 djs = [];
 moderators = [];
 commandLock = false;
@@ -94,6 +102,30 @@ bot.roomInfo(true, function(data) {
 		botSetIndex = djs.indexOf(botUserId)
 };
 
+function songStats(data){
+	up_votes = data.room.metadata.upvotes;
+	down_votes = data.room.metadata.downvotes;
+	var user = data.room.metadata.current_song.djname;
+	var stats_str="@"+user+" played:"+ artist+" - "+song + ": :heart:" + snag_count + ":thumbsup:" + up_votes + ":thumbsdown: " + down_votes;
+	up_votes=0;
+	down_votes=0;
+	snag_count=0;
+	return stats_str;
+}
+function fillSongInfo(data){
+	if(data.room.metadata.current_song){
+		artist = data.room.metadata.current_song.metadata.artist;
+		song = data.room.metadata.current_song.metadata.song;
+		album = data.room.metadata.current_song.metadata.album;
+		up_votes = data.room.metadata.upvotes;
+		down_votes = data.room.metadata.downvotes;
+	} else {
+		artist = "";
+		song = "";
+		album = "";
+	}
+}
+
 bot.on('update_votes', function(data){
 	if(VERBOSE) bot.speak("update votes");
 	up_votes = data.room.metadata.upvotes;
@@ -102,9 +134,12 @@ bot.on('update_votes', function(data){
 
 bot.on('newsong', function(data){
 	if(VERBOSE) bot.speak("newsong");
-	//var vote_count = data.room.metadata.upvotes;
+	artist = data.room.metadata.current_song.metadata.artist;
+	song = data.room.metadata.current_song.metadata.song;
+	album = data.room.metadata.current_song.metadata.album;
+	
 	currentDj = data.room.metadata.current_dj;
-
+	
 	if(currentDj==botUserId) 
 		{botCurrentlyPlaying=true;}
 	else 
@@ -112,14 +147,6 @@ bot.on('newsong', function(data){
 	if(botCurrentlyPlaying) 
 		{if(autoskip) {bot.skip();}}
 	if(autobop)  {bot.bop();}
-	if(M_VERBOSE) {
-		bot.speak('ab' + autobop);
-		bot.speak('as' + autoskip);
-		bot.speak("cid:"+currentDj);
-		bot.speak("bui:"+botUserId);
-		bot.speak('djc' + dj_count);
-		bot.speak('bos' + botOnSet);
-	}
 	
 	if(dj_count === 1 && !botOnSet && !botCurrentlyPlaying) {
 		bot.addDj();
@@ -132,6 +159,7 @@ bot.on('newsong', function(data){
 bot.on('roomChanged', function(data) {
 	bot.speak("Annnnd Im back");
 	djs = data.room.metadata.djs;
+	fillSongInfo(data);
 	users = data.users;
 	
 	user_count = users.length;
@@ -145,6 +173,7 @@ bot.on('roomChanged', function(data) {
 
 bot.on('nosong', function(data) {
 	bot.speak('so quiet...');
+	fillSongInfo(data);
 });
 
 bot.on('registered', function(data) {
@@ -182,14 +211,7 @@ bot.on('endsong',function(data){
 		//	jumpOffAfterSong=false; 
 		//}
 	}
-	
-	up_votes = data.room.metadata.upvotes;
-	down_votes = data.room.metadata.downvotes;
-	bot.speak(":thumbsup:" + up_votes + ":thumbsdown: " + down_votes);
-	bot.speak(":heart:" + snag_count);
-	up_votes=0;
-	down_votes=0;
-	snag_count=0;
+	if(autostats) bot.speak(songStats(data));
 	
 });
 

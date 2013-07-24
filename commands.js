@@ -166,6 +166,40 @@ commands = [
     show: true
   },
   {
+	name: 'bot remove song',
+	match:function(text){
+		return text.match(/^bot remove song$/);
+	},
+	command: function(data) {
+		bot.roomInfo(true,function(data) {
+		var newSong = data.room.metadata.current_song.id;
+		var songName = data.room.metadata.current_song.metadata.song;
+		bot.playlistRemove(newSong);
+        bot.speak('Removed '+ songName+ "...skipping...");
+		bot.skip();
+		});
+	},
+	help: "remove an Unwanted song from bot playlist",
+	show:true
+  },
+  
+  {
+	name: 'bot show song',
+	match:function(text){
+		return text.match(/^bot show song$/)
+	},
+	command: function(data) {
+		bot.roomInfo(true,function(data){
+			if(data.room.metadata.current_song){
+				var dj_name = data.room.metadata.current_song.djname;
+				bot.speak("@"+dj_name+" is Currently Playing: "+ artist+" - "+ song);
+			}else {bot.speak("No Music, I can't hear anything, atleast not to my Robot Ears");}
+		});
+	},
+	help: "Show current song playing",
+	show: true
+  },
+  {
     name: 'bot dance',
     match: function(text) {
       return text.match(/^bot dance$/);
@@ -269,6 +303,27 @@ commands = [
     help: 'toggle autobot',
     show: true
   },
+  
+  {
+    name: 'autostats',
+    match: function(text) {
+      return text.match(/^bot autostats(\son|\soff)?/);
+    },
+    command: function(data) {
+	  if(data.text.match(/on/)) {
+		autostats=true;
+		bot.speak('Ill give ya guys the details');
+	  }
+	  if(data.text.match(/off/)) {
+		autostats=false;
+		bot.speak('Im showin ya nuthin!');
+	  }
+    },
+    help: 'toggle song stats',
+    show: true
+  },
+  
+  
   { // TODO: Needs a fix because sometimes there are 11 PMs sent
     name: 'help',
     match: function(text) {
