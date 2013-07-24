@@ -66,6 +66,7 @@ function findNumber(data){
 function applyCommands(data) {
   // Get the data
   var name = data.name;
+  if (name == "spice_bot"){ return }	// Don't talk to yourself spice_bot.
   var text = data.text;
   if (data.text.match(/^bot guessing game$/)){
   	guessingGame(data);
