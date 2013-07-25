@@ -107,7 +107,7 @@ function songStats(data){
 	up_votes = data.room.metadata.upvotes;
 	down_votes = data.room.metadata.downvotes;
 	var user = data.room.metadata.current_song.djname;
-	var stats_str="@"+user+" played:"+ artist+" - "+song + ": :heart:" + snag_count + ":thumbsup:" + up_votes + ":thumbsdown: " + down_votes;
+	var stats_str="@"+user+" played: "+ artist+" - "+song + ": :heart:" + snag_count + " :thumbsup:" + up_votes + " :thumbsdown:" + down_votes;
 	up_votes=0;
 	down_votes=0;
 	snag_count=0;
