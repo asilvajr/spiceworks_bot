@@ -212,7 +212,7 @@ bot.on('endsong',function(data){
 		//	jumpOffAfterSong=false; 
 		//}
 	}
-	if(autostats) bot.speak(songStats(data));
+	if(autostats && user_count > 2) bot.speak(songStats(data));
 	
 });
 
